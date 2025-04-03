@@ -463,12 +463,18 @@ class _HtmlEditorWidgetWebState extends State<HtmlEditorWidget> {
             '"assets/packages/html_editor_enhanced/assets/summernote-lite.min.js"');
     if (widget.callbacks != null) addJSListener(widget.callbacks!);
     final iframe = html.IFrameElement()
-      ..width = MediaQuery.of(widget.initBC).size.width.toString() //'800'
+      ..width = MediaQuery.of(widget.initBC).size.width.toString()
       ..height = widget.htmlEditorOptions.autoAdjustHeight
           ? actualHeight.toString()
           : widget.otherOptions.height.toString()
-      // ignore: unsafe_html, necessary to load HTML string
-      ..srcdoc = htmlString
+      // Use a data URI instead:
+      ..src = Uri.dataFromString(
+          htmlString,
+          mimeType: 'text/html',
+          encoding: Encoding.getByName('utf-8')
+        ).toString()
+      ..style.border = 'none'
+      ..style.overflow = 'hidden'
       ..style.border = 'none'
       ..style.overflow = 'hidden'
       ..onLoad.listen((event) async {
